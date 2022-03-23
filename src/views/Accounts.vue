@@ -19,7 +19,7 @@
           :key="account"
           :color="account.nature === 'debit' ? 'danger' : 'primary'"
         >
-          <ion-label slot="start">
+          <ion-label slot="end">
             {{ account.nature === "debit" ? "Deudora" : "Acreedora" }}
           </ion-label>
           <ion-label>

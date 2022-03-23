@@ -5,7 +5,10 @@
         <ion-buttons slot="start">
           <ion-menu-button color="primary"></ion-menu-button>
         </ion-buttons>
-        <ion-title>{{ $route.params.id }}</ion-title>
+        <ion-title>Panel de control</ion-title>
+        <ion-buttons slot="end">
+          <ion-button color="primary" small>Nuevo comprobante</ion-button>
+        </ion-buttons>
       </ion-toolbar>
     </ion-header>
 

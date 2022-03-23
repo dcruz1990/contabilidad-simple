@@ -90,7 +90,7 @@ export default defineComponent({
     const selectedIndex = ref(0);
     const appPages = [
       {
-        title: "Home",
+        title: "Panel de Control",
         url: "/home",
         iosIcon: barChartSharp,
         mdIcon: barChartSharp,
