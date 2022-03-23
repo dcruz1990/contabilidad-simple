@@ -23,6 +23,11 @@ import '@ionic/vue/css/display.css';
 /* Theme variables */
 import './theme/variables.css';
 
+import { createClient } from '@supabase/supabase-js'
+
+// Create a single supabase client for interacting with your database 
+const supabase = createClient('https://oycsjhformyuenpdxgtu.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNjQzMDI3NjQ2LCJleHAiOjE5NTg2MDM2NDZ9.RXRH2XeE37bK6WMlZdbShPghmuAl2yvPDJbKXaUYekY')
+
 const app = createApp(App)
   .use(IonicVue)
   .use(router);
