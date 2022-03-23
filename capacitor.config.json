@@ -1,0 +1,6 @@
+{
+	"appId": "io.ionic.starter",
+	"appName": "ContabilidadSimple",
+	"webDir": "dist",
+	"bundledWebRuntime": false
+}

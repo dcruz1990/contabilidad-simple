@@ -1,0 +1,8 @@
+{
+  "name": "ContabilidadSimple",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "vue",
+  "id": "432570fd"
+}
