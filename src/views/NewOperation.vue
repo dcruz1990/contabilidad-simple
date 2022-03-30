@@ -85,6 +85,26 @@ import {
   alertController,
 } from "@ionic/vue";
 
+type Account = {
+  id: number;
+  nature: string;
+  balance: number;
+  name: string;
+  created_at: string;
+};
+
+type Operation = {
+  id?: number;
+  name: string;
+  description: string;
+  created_at?: string;
+  account: number;
+  debit: number;
+  credit: number;
+  initialAmmount?: number;
+  finalAmmount?: number;
+};
+
 export default defineComponent({
   name: "AccountComponent",
   components: {
@@ -107,13 +127,25 @@ export default defineComponent({
     const selectedAccount = ref();
     const credit = ref<number>();
     const debit = ref<number>();
-    const desc = ref(null);
-    const name = ref(null);
+    const desc = ref("");
+    const name = ref("");
     const loading = ref<boolean>(false);
+    const currentAccount = ref<Account>();
 
     const getAccounts = async () => {
-      const { data, error } = await supabase.from("account").select();
+      const { data, error } = await supabase.from<Account>("account").select();
       data ? (accounts.value = data) : null;
+    };
+
+    const getAccountInfo = async (accountId: number) => {
+      const { data, error } = await supabase
+        .from<Account>("account")
+        .select()
+        .eq("id", accountId);
+
+      if (!data) return;
+
+      currentAccount.value = data[0] || undefined;
     };
 
     // const itemColor = computed(() => {});
@@ -126,7 +158,9 @@ export default defineComponent({
       getAccounts();
     });
 
-    console.log(accounts);
+    const incrementOrDecrement = (nature: string) => {
+      nature === "credit";
+    };
 
     const contabilize = async () => {
       loading.value = true;
@@ -134,17 +168,43 @@ export default defineComponent({
       console.log(debit.value);
       console.log(selectedAccount.value);
 
-      const { data, error } = await supabase.from("operation").insert([
-        {
-          name: name.value,
-          description: desc.value,
-          account: selectedAccount.value,
-          debit: debit.value,
-          credit: credit.value,
-        },
-      ]);
+      const account = await getAccountInfo(selectedAccount.value);
+
+      const { data, error } = await supabase
+        .from<Operation>("operation")
+        .insert([
+          {
+            name: name.value,
+            description: desc.value,
+            account: selectedAccount.value,
+            debit: debit.value,
+            credit: credit.value,
+            initialAmmount: currentAccount.value?.balance,
+            finalAmmount:
+              currentAccount.value?.nature === "debit"
+                ? currentAccount.value?.balance + debit.value!
+                : 0,
+          },
+        ]);
+
+      updateAccountBalance(
+        currentAccount.value?.nature === "debit"
+          ? currentAccount.value?.balance + debit.value!
+          : 0
+      );
 
       data ? ((loading.value = false), resetValues(), presentAlert()) : null;
+    };
+
+    const updateAccountBalance = async (balance: number) => {
+      const { data, error } = await supabase
+        .from("account")
+        .upsert({
+          balance: balance,
+        })
+        .match({ id: currentAccount.value?.id });
+
+      console.log(data);
     };
 
     const presentAlert = async () => {
@@ -164,8 +224,8 @@ export default defineComponent({
     const resetValues = () => {
       debit.value = 0;
       credit.value = 0;
-      name.value = null;
-      desc.value = null;
+      name.value = "";
+      desc.value = "";
       selectedAccount.value = null;
     };
 
