@@ -7,7 +7,9 @@
         </ion-buttons>
         <ion-title>Panel de control</ion-title>
         <ion-buttons slot="end">
-          <ion-button color="primary" small>Nuevo comprobante</ion-button>
+          <ion-button fill="solid" color="primary" small @click="goToOperation"
+            >Nuevo comprobante</ion-button
+          >
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
@@ -22,7 +24,7 @@
       <div id="container">
         <strong class="capitalize">{{ $route.params.id }}</strong>
         <p>
-          Explore aaaaaa
+          Explore
           <a
             target="_blank"
             rel="noopener noreferrer"
@@ -47,6 +49,7 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/vue";
+import router from "@/router";
 
 export default defineComponent({
   name: "FolderPage",
@@ -58,6 +61,15 @@ export default defineComponent({
     IonPage,
     IonTitle,
     IonToolbar,
+  },
+  setup: () => {
+    const goToOperation = () => {
+      router.push("/operation");
+    };
+
+    return {
+      goToOperation,
+    };
   },
 });
 </script>
