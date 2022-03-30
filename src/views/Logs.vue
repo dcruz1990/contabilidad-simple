@@ -5,7 +5,7 @@
         <ion-buttons slot="start">
           <ion-menu-button color="primary"></ion-menu-button>
         </ion-buttons>
-        <ion-title>Nuevo comprobante</ion-title>
+        <ion-title>Registro de operaciones</ion-title>
         <ion-buttons slot="end">
           <!-- <ion-button color="primary" small>Adicionar</ion-button> -->
         </ion-buttons>
@@ -29,52 +29,7 @@
         >
       </ion-select>
 
-      <ion-text color="secondary" style="marginleft: 20px">
-        <h1>Informacion de la cuenta:</h1>
-
-        <p>Naturaleza:</p>
-        {{
-          currentAccount
-            ? currentAccount.nature === "credit"
-              ? "Cuenta de credito: Las cuentas de pasivos son de naturaleza acreedora, lo que significa que aumentan su saldo con crédito y disminuye cuando se les da un débito."
-              : "Cuenta de debito: Las cuentas de activos son de naturaleza deudora. Esto quiere decir que aumentan su saldo cuando se les da un débito y por el contrario se reduce su saldo al acreditarse."
-            : "No hay cuenta seleccionada"
-        }}
-      </ion-text>
-
-      <ion-item>
-        <ion-label>Debe</ion-label>
-        <ion-input placeholder="Debe" v-model="debit"></ion-input>
-      </ion-item>
-
-      <ion-item>
-        <ion-label>Haber</ion-label>
-        <ion-input placeholder="Haber" v-model="credit"></ion-input>
-      </ion-item>
-
-      <ion-item>
-        <ion-label>Nombre</ion-label>
-        <ion-input placeholder="Nombre" v-model="name"></ion-input>
-      </ion-item>
-
-      <ion-item>
-        <ion-textarea
-          v-model="desc"
-          placeholder="Escriba la descripcion de la operacion"
-        ></ion-textarea>
-      </ion-item>
-
-      <div class="buttonContainer">
-        <ion-button
-          fill="solid"
-          color="primary"
-          @click="contabilize"
-          :disabled="!selectedAccount"
-        >
-          <ion-spinner v-if="loading" name="crescent"></ion-spinner>
-          Contabilizar</ion-button
-        >
-      </div>
+      Tabla con los logs
     </ion-content>
   </ion-page>
 </template>
