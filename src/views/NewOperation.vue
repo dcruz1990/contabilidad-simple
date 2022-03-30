@@ -29,6 +29,19 @@
         >
       </ion-select>
 
+      <ion-text color="secondary" style="marginleft: 20px">
+        <h1>Informacion de la cuenta:</h1>
+
+        <p>Naturaleza:</p>
+        {{
+          currentAccount
+            ? currentAccount.nature === "credit"
+              ? "Cuenta de credito: Las cuentas de pasivos son de naturaleza acreedora, lo que significa que aumentan su saldo con crédito y disminuye cuando se les da un débito."
+              : "Cuenta de debito: Las cuentas de activos son de naturaleza deudora. Esto quiere decir que aumentan su saldo cuando se les da un débito y por el contrario se reduce su saldo al acreditarse."
+            : "No hay cuenta seleccionada"
+        }}
+      </ion-text>
+
       <ion-item>
         <ion-label>Debe</ion-label>
         <ion-input placeholder="Debe" v-model="debit"></ion-input>
@@ -68,7 +81,7 @@
 
 <script lang="ts">
 import { supabase } from "../supabase";
-import { computed, defineComponent, onMounted, ref, watchEffect } from "vue";
+import { computed, defineComponent, onMounted, ref, watch } from "vue";
 import {
   IonButtons,
   IonContent,
@@ -83,6 +96,7 @@ import {
   IonSelectOption,
   IonTextarea,
   alertController,
+  IonText,
 } from "@ionic/vue";
 
 type Account = {
@@ -119,6 +133,7 @@ export default defineComponent({
     IonSelect,
     IonSelectOption,
     IonTextarea,
+    IonText,
   },
 
   setup: () => {
@@ -130,7 +145,7 @@ export default defineComponent({
     const desc = ref("");
     const name = ref("");
     const loading = ref<boolean>(false);
-    const currentAccount = ref<Account>();
+    const currentAccount = ref<any>();
 
     const getAccounts = async () => {
       const { data, error } = await supabase.from<Account>("account").select();
@@ -187,19 +202,27 @@ export default defineComponent({
           },
         ]);
 
-      updateAccountBalance(
-        currentAccount.value?.nature === "debit"
-          ? currentAccount.value?.balance + debit.value!
-          : 0
-      );
+      if (currentAccount.value?.nature === "debit") {
+        await updateAccountBalance(currentAccount.value.balance + credit.value);
+      } else {
+        await updateAccountBalance(currentAccount.value.balance - debit.value!);
+      }
+
+      // updateAccountBalance(
+      //   currentAccount.value?.nature === "debit"
+      //     ? currentAccount.value?.balance + debit.value!
+      //     : currentAccount.value?.balance - credit.value!
+      // );
 
       data ? ((loading.value = false), resetValues(), presentAlert()) : null;
     };
 
     const updateAccountBalance = async (balance: number) => {
+      console.log(balance);
+      console.log(currentAccount.value.id);
       const { data, error } = await supabase
         .from("account")
-        .upsert({
+        .update({
           balance: balance,
         })
         .match({ id: currentAccount.value?.id });
@@ -226,8 +249,13 @@ export default defineComponent({
       credit.value = 0;
       name.value = "";
       desc.value = "";
-      selectedAccount.value = null;
+      selectedAccount.value = 0;
     };
+
+    watch(selectedAccount, async () => {
+      console.log(selectedAccount.value);
+      await getAccountInfo(selectedAccount.value);
+    });
 
     return {
       accounts,
@@ -240,6 +268,7 @@ export default defineComponent({
       desc,
       name,
       loading,
+      currentAccount,
     };
   },
 });
